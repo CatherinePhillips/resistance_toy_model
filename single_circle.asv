@@ -1,4 +1,9 @@
+%initializing variables 
+%H is magnetic field strength
+%mu is carrier mobility
+%V is the voltage we're applying 
 syms H mu;
+%v_a is 
 syms v i [1 4];
 syms r_in;
 syms Z [4 4];
@@ -8,5 +13,5 @@ Y = [0, -1,  0,  1;
      0,  1,  0, -1;
     -1,  0,  1,  0];
 Z = r_in * (eye(4) + sym(1/2) * H * mu * Y);
-
-
+v = Z * i;
+v
