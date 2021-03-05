@@ -1,0 +1,5 @@
+syms H mu;
+syms v i [4 4];
+syms r_in [1 4] = [sym(1), sym(1), sym(1)1, 1];
+syms Z [4 4 4];
+r_in
