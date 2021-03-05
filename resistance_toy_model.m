@@ -8,8 +8,17 @@ syms H mu V;
 %r1-4 are the resistivities of each disk
 syms r1 r2 r3 r4;
 
-%vab is the voltage in the ath disk at the bth position
-%iab is analogous
+%DELETE LATER
+%set everything to 1 so it's happy
+H = 1;
+mu = 1;
+r1 = 1;
+r2 = 2;
+r3 = 3;
+r4 = 4;
+
+%v_ab is the voltage in the ath disk at the bth position
+%i_ab is analogous
 syms v i [4 4];
 %Z is our impedence matrix that relates v and i 
 syms Z [4 4];
@@ -27,11 +36,11 @@ Y = [0, -1,  0,  1;
     -1,  0,  1,  0];
 
 %equations is the system of equations that we'll solve
-syms equations [34 32]; 
-equations(1:34, 1:32) = sym(0);
-syms b [34 1];
+syms equations [32 32]; 
+equations(1:32, 1:32) = sym(0);
+syms b [32 1];
 b(1:32, 1) = sym(0);
-b(33:34, 1) = V;
+b(29:30, 1) = V;
 
 
 %create our impedence matrix 
@@ -39,7 +48,7 @@ b(33:34, 1) = V;
 Z = r_in .* (sym(eye(4)) + sym(1/2) * H * mu * Y);
 %sanity check that this equation is true and v gives happy numbers
 v = Z * i.';
-v
+v;
 
 %start filling our system of equations to solve
 %the first part will be this same v = Z*i but now in matrix form
@@ -50,47 +59,56 @@ equations(5:8, 21:24) = Z;
 equations(9:12, 25:28) = Z;
 equations(13:16, 29:32) = Z;
 
-%next we'll do the kirchoff node rule for each node
-%fills rows 17-20
-for c = 1:4
-equations((16 + c), (17 + 4*(c-1)):(20 + 4*(c-1))) = 1;
-end
-
 %next we'll do everything that's the same 
-%fills rows 21-28
+%fills rows 17-24
 %v1_3 and v2_1
-equations(21, 3) = 1;
-equations(21, 5) = -1;
+equations(17, 3) = 1;
+equations(17, 5) = -1;
 %i1_3 and i2_1
-equations(22, 16+3) = 1;
-equations(22, 16+5) = -1;
+equations(18, 16+3) = 1;
+equations(18, 16+5) = 1;
 %v1_4 and v3_2
-equations(23, 4) = 1;
-equations(23, 10) = -1;
+equations(19, 4) = 1;
+equations(19, 10) = -1;
 %i1_4 and i3_2 
-equations(24, 16+4) = 1;
-equations(24, 16+10) = -1;
+equations(20, 16+4) = 1;
+equations(20, 16+10) = 1;
 %v2_4 and v4_2
-equations(25, 8) = 1;
-equations(25, 14) = -1;
+equations(21, 8) = 1;
+equations(21, 14) = -1;
 %i2_4 and i4_2
-equations(26, 16+8) = 1;
-equations(26, 16+14) = -1;
+equations(22, 16+8) = 1;
+equations(22, 16+14) = 1;
 %v3_3 and v4_1
-equations(27, 11) = 1;
-equations(27, 13) = -1;
+equations(23, 11) = 1;
+equations(23, 13) = -1;
 %i3_3 and i4_1
-equations(28, 16+11) = 1;
-equations(28, 16+13) = -1;
+equations(24, 16+11) = 1;
+equations(24, 16+13) = 1;
 
-%now the random equations
-equations(29, 2) = 1;
-equations(30, 6) = 1;
-% equations(31, 12) = 1;
-% equations(32, 16) = 1;
+%now the boundary conditions
+%i_12 = 0
+equations(25, 16+2) = 1;
+%i_22 = 0
+equations(26, 16+6) = 1;
+%i_34 = 0
+equations(27, 16+12) = 1;
+%i_44 = 0
+equations(28, 16+16) = 1;
 
-equations(33, 1) = 1; 
-equations(34, 9) = 1;
+%these correspond w/ lines 29 + 30 in b 
+%IF YOU CHANGE THESE ROWS CHANGE THAT TOO
+%v_11 = V
+equations(29, 1) = 1; 
+%v_31 = V
+equations(30, 9) = 1;
+
+%kirchoff loop rule
+%v_14 + v_13 + v_41 + v_42 = 0
+equations(31, 3) = 1;
+equations(31, 4) = 1;
+equations(31, 13) = 1;
+equations(31, 14) = 1;
 
 %attempt to solve the system of equations 
 x = linsolve(equations, b);
