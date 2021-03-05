@@ -92,6 +92,7 @@ equations(30, 6) = 1;
 equations(33, 1) = 1; 
 equations(34, 9) = 1;
 
+%attempt to solve the system of equations 
 x = linsolve(equations, b);
 x
 
