@@ -4,18 +4,19 @@ clear all;
 %H is magnetic field strength
 %mu is carrier mobility
 %V is the voltage we're applying 
-syms H mu V;
+syms H mu I;
 %r1-4 are the resistivities of each disk
 syms r1 r2 r3 r4;
 
 %DELETE LATER
 %set everything to 1 so it's happy
-H = 1;
+H = 0;
 mu = 1;
 r1 = 1;
-r2 = 2;
-r3 = 3;
-r4 = 4;
+r2 = 1;
+r3 = 1;
+r4 = 1;
+I = 1;
 
 %v_ab is the voltage in the ath disk at the bth position
 %i_ab is analogous
@@ -35,17 +36,31 @@ Y = [0, -1,  0,  1;
      0,  1,  0, -1;
     -1,  0,  1,  0];
 
+%T changes from absolute to relative voltages 
+T = [-1, 1, 0, 0;
+     0, -1, 1, 0;
+     0, 0, -1, 1;
+     1, 0, 0, -1];
+
 %equations is the system of equations that we'll solve
 syms equations [32 32]; 
 equations(1:32, 1:32) = sym(0);
+%b is the constants for matrix solving a la Ax=b
 syms b [32 1];
 b(1:32, 1) = sym(0);
-b(29:30, 1) = V;
+b(29:30, 1) = I;
 
-
+% Za = -0.35 + 3.14/4 * H * mu; 
+% Zb = 0.35 + 3.14/4 * H * mu;
+% Zc = 0.35 - 3.14/4 * H * mu;
+% Zd = -0.35 - 3.14/4 * H * mu;
+% Z = [Za, Zb, Zc, Zd; 
+%     Zd, Za, Zb, Zc;
+%     Zc, Zd, Za, Zb;
+%     Zb, Zc, Zd, Za];
 %create our impedence matrix 
 %follows formula in Hu, Parish, et al.
-Z = r_in .* (sym(eye(4)) + sym(1/2) * H * mu * Y);
+Z = sym(1/2) * r_in .* (sym(eye(4)) + (sym(1/2) * H * mu * Y));
 %sanity check that this equation is true and v gives happy numbers
 v = Z * i.';
 v;
@@ -53,11 +68,18 @@ v;
 %start filling our system of equations to solve
 %the first part will be this same v = Z*i but now in matrix form
 %fills rows 1-16
-equations(1:16, 1:16) = eye(16);
+%equations(1:16, 1:16) = eye(16);
+
 equations(1:4, 17:20) = Z;
 equations(5:8, 21:24) = Z;
 equations(9:12, 25:28) = Z;
 equations(13:16, 29:32) = Z;
+
+equations(1:4, 1:4) = T;
+equations(5:8, 5:8) = T;
+equations(9:12, 9:12) = T;
+equations(13:16, 13:16) = T;
+
 
 %next we'll do everything that's the same 
 %fills rows 17-24
@@ -99,20 +121,36 @@ equations(28, 16+16) = 1;
 %these correspond w/ lines 29 + 30 in b 
 %IF YOU CHANGE THESE ROWS CHANGE THAT TOO
 %v_11 = V
-equations(29, 1) = 1; 
+equations(29, 16+1) = 1; 
 %v_31 = V
-equations(30, 9) = 1;
+equations(30, 16+9) = 1;
 
 %kirchoff loop rule
-%v_14 + v_13 + v_41 + v_42 = 0
-equations(31, 3) = 1;
-equations(31, 4) = 1;
-equations(31, 13) = 1;
-equations(31, 14) = 1;
+%i_11 + i_31 - i_21 - i_41 = 0
+% equations(31, 16+1) = 1;
+% equations(31, 16+2) = 1;
+% equations(31, 16+3) = 1;
+% equations(31, 16+4) = 1;
+
+equations(31, 1) = 1;
+equations(32, 9) = 1;
 
 %attempt to solve the system of equations 
 x = linsolve(equations, b);
-x
+for a = 1:4
+    for b = 1:4
+        v(a, b) = x( 4 * (a-1) + b);
+    end
+end
+
+for a = 1:4
+    for b = 1:4
+        i(a, b) = x( 16 + 4 * (a-1) + b);
+    end
+end
+
+v
+i
 
 % v1_1 = V;
 % v2_1 = V; 

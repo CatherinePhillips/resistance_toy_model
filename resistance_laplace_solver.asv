@@ -1,0 +1,44 @@
+global phi, theta, rho;
+%overall function to call
+function output = resistance_laplace_solver(phi_, theta_, rho_, beta, nMax)
+phi = phi_;
+theta = theta_;
+rho = rho_;
+output = contacts(beta, nMax);
+end
+
+%S matrix as given by Parish
+function S_ = S(n)
+    S_ = [2*Sin(n*phi/2);
+        Sin(n*pi/2 + n * phi/2) - Sin(n *pi/2 - n *phi/2);
+        Sin(n *pi + n *phi/2) - Sin(n *pi - n *phi/2);
+        Sin(3*n*pi/2 + n *phi/2) - Sin(3*n*pi/2 - n *phi/2)];
+end 
+
+%T matrix as given by Parish 
+function T_ = T(n) 
+    T_ = [0;
+         Cos(n*pi/2 - n*phi/2) - Cos(n*pi/2 + n*phi/2);
+        0;
+        Cos(3*n*pi/2 - n *phi /2) - Cos(3*n*pi/2 + n *phi/2)];
+end
+
+%U combines S and T matrices, does only for one n at a time though
+function U_ = U(beta, theta, n)
+U_ = 1/(n^2) * -(rho / (pi * phi)) * ((S(n) - beta * T(n)) * Cos(n * theta)... 
++ (T(n) + beta*S(n))* Sin(n * theta));
+end
+
+%sums up all the U matrices for n from 1 to nMax
+function bigU_ = bigU(beta, theta, nMax)
+n_list = 1:nMax;
+bigU_ = sum(U(beta, theta, n_list), 2);
+end
+
+%finds the values for bigU specifically at the contacts 
+function contacts_ = contacts(beta, nMax)
+contacts_ = [bigU(beta, pi/2, nMax) - bigU(beta, 0, nMax), ...
+            bigU(beta, pi, nMax) - bigU(beta, pi/2, nMax), ...
+            bigU(beta, 3*pi/2, nMax) - bigU(beta, pi, nMax), ...
+            bigU(beta, 0, nMax) - bigU(beta, 3*pi/2, nMax)];
+end
