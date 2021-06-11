@@ -1,4 +1,4 @@
-function resistance_visualization(M, N, x, r)
+function resistance_visualization(M, N, x, r, Tc, vtrue, itrue, rtrue, tctrue)
 tic
 %initialize values
 
@@ -97,13 +97,16 @@ end
 [xq,yq] = meshgrid(1:1:2*M+2, 1:1:2*N+2);
 vq = griddata(v_row,v_col,v_val,xq,yq);
 
+if vtrue == 1
 %create a figure for voltage
  figure 
  %pad with zeros to make pcolor give vertex values 
  pcolor([vq.', zeros(size(vq.',1), 1); zeros(1, size(vq.',2)+1)]);
  colorbar;
  hold on
- quiver(i_col + 0.5, i_row + 0.5, i_u, i_v, 'k', 'LineWidth', 3);
+ if itrue == 1
+    quiver(i_col + 0.5, i_row + 0.5, i_u, i_v, 'k', 'LineWidth', 3);
+ end
  xlim([0 2*M+2])
  ylim([0 2*N+2])
  for a = 1:M
@@ -111,8 +114,9 @@ vq = griddata(v_row,v_col,v_val,xq,yq);
          circle(2*b + 0.5, 2*a + 0.5, 1);
      end
  end
- 
+end
  %create a figure for resistances
+ if rtrue == 1
  figure 
  hold on
  xlim([0 M + 1])
@@ -125,6 +129,22 @@ vq = griddata(v_row,v_col,v_val,xq,yq);
          circle(b + 0.5,  a+ 0.5, 0.5);
      end
  end
+ end 
+ 
+ if tctrue == 1
+ figure 
+ hold on
+ xlim([0 M + 1])
+ ylim([0 N + 2])
+ %pad with zeros to make pcolor give vertex values 
+ pcolor([Tc.', zeros(size(r,1), 1); zeros(1, size(r,2)+1)])
+ colorbar;
+ for a = 1:M
+     for b = 1:N
+         circle(b + 0.5,  a+ 0.5, 0.5);
+     end
+ end
+ end 
  
 toc 
 end

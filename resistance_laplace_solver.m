@@ -2,7 +2,6 @@
 %returns the resistivity matrix (hopefully)
 function output = resistance_laplace_solver(phi, rho, beta, nMax)
 output = contacts(phi, rho, beta, nMax);
-output
 end
 
 %S matrix as given by Parish
