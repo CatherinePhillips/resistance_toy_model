@@ -86,7 +86,7 @@ for a = 1:M
 end
 %set that constant voltage V
 b_(8*M*N-M+1:8*M*N, 1) = V;
-
+%equations
 %attempt to solve the system of equations 
 x = linsolve(equations, b_);
 

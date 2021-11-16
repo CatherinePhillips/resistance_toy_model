@@ -54,21 +54,23 @@ r_neighbor = (1 - k_neighbor) * r_random + k_neighbor * r_smooth;
 %k_patches is how much the patches impact relative to the base randomness
 patchSize = [2, 2];
 k_patches = 0.7;
-r_patchOverlay = r_factor * 2*kron(rand(M/patchSize(1), N/patchSize(2)), ones(patchSize));
-r_patches = (1 - k_patches) * r_random + k_patches * r_patchOverlay;
+%r_patchOverlay = r_factor * 2*kron(rand(M/patchSize(1), N/patchSize(2)), ones(patchSize));
+%r_patches = (1 - k_patches) * r_random + k_patches * r_patchOverlay;
 
 %use logical masking to set the superconducting bits
 %r_random(Tc_random < T) = 0.001;
 
 %comparison graphs 
 x_base = expanded_resistance_function(M, N, 0, mu, phi, V, n_max, r_base);
-resistance_visualization(M, N, x_base, r_base, Tc_base, 1, 1, 1, 0);
+%resistance_visualization(M, N, x_base, r_base, Tc_base, 1, 1, 1, 0);
 
 rando = random('Normal', 1, 0.7, M,N);
 rando( rando < 0) = 0.001;
 x_rando = expanded_resistance_function(M, N, 0, mu, phi, V, n_max, rando);
-resistance_visualization(M, N, x_rando, rando, Tc_base, 1, 1, 1, 0);
-resistance_visualization(M, N, x_rando-x_base, rando-r_base, Tc_base, 1, 0, 1, 0);
+%resistance_visualization(M, N, x_rando, rando, Tc_base, 1, 1, 1, 0);
+%resistance_visualization(M, N, x_rando-x_base, rando-r_base, Tc_base, 1, 0, 1, 0);
+
+temperature_resistance_movie(M, N, 1, phi, V, n_max, 5, 5, 0, 2, 0.1, 1)
 
 %  transverse_resistance_visualization(M, N, 1, phi, V, n_max, r_base, 5, 5, 0, 0.2, 0.01, 0, 0, 1);
 %  transverse_resistance_visualization(M, N, 1, phi, V, n_max, r_random, [3,5,7], [3,5,7], -20, 20, 1, 1, 0);

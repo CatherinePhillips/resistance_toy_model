@@ -97,12 +97,14 @@ end
 [xq,yq] = meshgrid(1:1:2*M+2, 1:1:2*N+2);
 vq = griddata(v_row,v_col,v_val,xq,yq);
 
+
 if vtrue == 1
 %create a figure for voltage
- figure 
+ %figure 
  %pad with zeros to make pcolor give vertex values 
  pcolor([vq.', zeros(size(vq.',1), 1); zeros(1, size(vq.',2)+1)]);
  colorbar;
+ caxis([-1 0])
  hold on
  if itrue == 1
     quiver(i_col + 0.5, i_row + 0.5, i_u, i_v, 'k', 'LineWidth', 3);
@@ -117,13 +119,14 @@ if vtrue == 1
 end
  %create a figure for resistances
  if rtrue == 1
- figure 
+ %figure 
  hold on
  xlim([0 M + 1])
  ylim([0 N + 2])
  %pad with zeros to make pcolor give vertex values 
  pcolor([r.', zeros(size(r,1), 1); zeros(1, size(r,2)+1)])
  colorbar;
+ caxis([0 1]);
  for a = 1:M
      for b = 1:N
          circle(b + 0.5,  a+ 0.5, 0.5);
