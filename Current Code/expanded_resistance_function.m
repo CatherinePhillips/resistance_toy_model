@@ -1,3 +1,8 @@
+%calculates the v and i for a material given parameters with expected
+%boundary conditions
+%output: a 1 by 8*M*N matrix that contains all the voltages and then all
+%the currents, going first around the circles clockwise from the left
+%side, then left to right and top to bottom in rows
 
 %input variables
 %we want an M by N matrix

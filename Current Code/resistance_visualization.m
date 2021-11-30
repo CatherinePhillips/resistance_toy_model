@@ -1,3 +1,6 @@
+%this function makes the voltage, current, resistivity, and Tc graphs
+%(basically all the graphs that are mapped onto real space axes)
+%output: between 1 and 4 graphs depending on the values of vtrue etc. 
 function resistance_visualization(M, N, x, r, Tc, vtrue, itrue, rtrue, tctrue)
 tic
 %initialize values
