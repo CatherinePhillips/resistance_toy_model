@@ -1,10 +1,16 @@
+%gives transverse and longitudinal voltage differences from specified
+%points subject to change in magnetic field 
+%output: a graph of that
 function transverse_resistance_visualization(M, N, mu, phi, V, n_max, r, x_top, x_bottom, min, max, step, transtrue, longtrue, randtrue)
 tic
+%initialization
 B_vals = zeros(1, (max - min)/step);
 V_vals = zeros(1, (max - min)/step);
 V0 = 0;
 I0 = 0;
 R_vals = zeros(1, (max - min)/step); 
+
+%transverse voltage 
 if(transtrue)
     for a = 1:(max-min)/step
         x_output = expanded_resistance_function(M, N, ((a-1)*step + min), mu, phi, V, n_max, r);
@@ -50,6 +56,8 @@ if(transtrue)
     legend("x = 3", "x = 5", "x = 7", 'Location', 'southeast')
     hold off
 end
+
+%longitudinal resistance (longitudinal voltage will always be the same
 if(longtrue) 
     for a = 1:(max-min)/step
         x_output = expanded_resistance_function(M, N, ((a-1)*step + min), mu, phi, V, n_max, r);
